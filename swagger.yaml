@@ -1,0 +1,3875 @@
+swagger: '2.0'
+info:
+  version: '1'
+  title: Public API version 1.0
+host: test.case.one
+schemes:
+  - https
+paths:
+  /api/v1/auth/token:
+    post:
+      tags:
+        - Auth
+      summary: Obtain or refresh access token
+      description: Returns access token information.
+      operationId: Auth_ObtainOrRefreshToken
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          description: Obtain or refresh access token request
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Auth.TokenRequest'
+      responses:
+        '200':
+          description: Access token information
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Auth.Token'
+        '400':
+          description: Obtain or refresh access token error
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Auth.TokenError'
+      deprecated: false
+  /api/v1/auth/wintoken:
+    post:
+      tags:
+        - Auth
+      summary: Obtain access token with windows authentication.
+      description: Returns access token information.
+      operationId: Auth_ObtainOrRefreshTokenWithWindowsAuthentication
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters: []
+      responses:
+        '200':
+          description: Access token information
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Auth.Token'
+        '400':
+          description: Obtain access token error
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Auth.TokenError'
+      deprecated: false
+  '/api/v1/calls/{id}/attachRecording':
+    put:
+      tags:
+        - Calls
+      summary: Attach recording
+      description: Attach recording to call
+      operationId: Calls_AttachRecording
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of call
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: Recording info
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Calls.AttachRecordingRequest'
+        - name: Authorization
+          in: header
+          description: 'Authorization: Token {access_token}'
+          required: true
+          type: string
+          default: 'Token {access_token}'
+      responses:
+        '204':
+          description: Recording successfully attached to call
+        '404':
+          description: Specified call not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/calls:
+    post:
+      tags:
+        - Calls
+      summary: Create call
+      description: Create call
+      operationId: Calls_CreateCall
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          description: Request to create call
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.Modules.Calls.Commands.CreateCall'
+        - name: Authorization
+          in: header
+          description: 'Authorization: Token {access_token}'
+          required: true
+          type: string
+          default: 'Token {access_token}'
+      responses:
+        '201':
+          description: Created call
+          schema:
+            $ref: '#/definitions/CaseMap.Modules.Calls.Models.CallDto'
+        '400':
+          description: Call already exists or specified module inactive
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/calls/uploadRecording:
+    post:
+      tags:
+        - Calls
+      summary: Upload recording
+      description: Upload recording of call
+      operationId: Calls_UploadRecording
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: 'Authorization: Token {access_token}'
+          required: true
+          type: string
+          default: 'Token {access_token}'
+      responses:
+        '200':
+          description: Uploaded file info
+          schema:
+            $ref: '#/definitions/CaseDotStar.ServicePackages.Common.FileSummary'
+      deprecated: false
+  /api/v1/calls/sendNotification:
+    post:
+      tags:
+        - Calls
+      summary: Send notification
+      description: Send notification about beginning of call
+      operationId: Calls_SendNotification
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces: []
+      parameters:
+        - name: request
+          in: body
+          description: Notification info
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.Modules.Calls.Commands.SendNotification'
+        - name: Authorization
+          in: header
+          description: 'Authorization: Token {access_token}'
+          required: true
+          type: string
+          default: 'Token {access_token}'
+      responses:
+        '204':
+          description: Notification successfully sent to user
+        '400':
+          description: Specified module inactive
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/cases/{id}':
+    get:
+      tags:
+        - Cases
+      summary: Get case
+      description: Returns detailed information about specified case.
+      operationId: Cases_GetCase
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of case
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Case
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Cases.CaseDetails'
+        '404':
+          description: Specified case not found or not enough permissions
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+    put:
+      tags:
+        - Cases
+      summary: Update case
+      description: Update case with blocks
+      operationId: Cases_UpdateCase
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of case
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: Request to update case
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Cases.UpdateCaseRequest'
+      responses:
+        '200':
+          description: Updated case
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Cases.CaseDetails'
+        '404':
+          description: >-
+            Specified case not found or not enough permissions to edit specified
+            case
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+    delete:
+      tags:
+        - Cases
+      summary: Delete case
+      description: Delete archived case
+      operationId: Cases_DeleteCase
+      consumes: []
+      produces: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of case
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Case successfully deleted
+        '400':
+          description: 'An active case cannot be deleted, archive case first'
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: >-
+            Specified case not found or not enough permissions to edit specified
+            case
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/cases:
+    get:
+      tags:
+        - Cases
+      summary: Get cases
+      description: Returns cases.
+      operationId: Cases_GetCases
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: caseTypeId
+          in: query
+          description: Filter cases by type
+          required: false
+          type: string
+        - name: folderId
+          in: query
+          description: Get cases from folder
+          required: false
+          type: string
+        - name: projectId
+          in: query
+          description: Get cases from project
+          required: false
+          type: string
+        - name: assigneeId
+          in: query
+          description: Filter cases by assignee
+          required: false
+          type: string
+        - name: isArchive
+          in: query
+          description: Filter archived cases
+          required: false
+          type: boolean
+        - name: minDate
+          in: query
+          description: >-
+            Min creation date of cases in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+            (inclusive)
+          required: false
+          type: string
+          format: date-time
+        - name: maxDate
+          in: query
+          description: >-
+            Max creation date of cases in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+            (exclusive)
+          required: false
+          type: string
+          format: date-time
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: List of cases
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Cases.Case]
+      deprecated: false
+    post:
+      tags:
+        - Cases
+      summary: Create case
+      description: Create case with blocks
+      operationId: Cases_CreateCase
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          description: Request to create case
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Cases.CreateCaseRequest'
+      responses:
+        '201':
+          description: Created case
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Cases.CaseDetails'
+      deprecated: false
+  '/api/v1/cases/{id}/archive':
+    post:
+      tags:
+        - Cases
+      summary: Archive case
+      description: Archive case
+      operationId: Cases_ArchiveCase
+      consumes: []
+      produces: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of case
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Case successfully archived or case already been archived
+        '404':
+          description: >-
+            Specified case not found or not enough permissions to edit specified
+            case
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/cases/{id}/restore':
+    post:
+      tags:
+        - Cases
+      summary: Restore case
+      description: Restore archived case
+      operationId: Cases_RestoreCase
+      consumes: []
+      produces: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of case
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Case successfully restored or case is not archived
+        '404':
+          description: >-
+            Specified case not found or not enough permissions to edit specified
+            case
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/caseTypes:
+    get:
+      tags:
+        - CaseTypes
+      summary: Get case types
+      description: Returns all case types.
+      operationId: CaseTypes_GetCaseTypes
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.CaseTypes.CaseType]
+      deprecated: false
+  '/api/v1/caseTypes/{id}':
+    get:
+      tags:
+        - CaseTypes
+      summary: Get case type
+      description: >-
+        Returns detailed information about specified case type, case type
+        contains metadata of cases.
+      operationId: CaseTypes_GetCaseType
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of case type
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Case type detailed information
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.CaseTypes.CaseTypeDetails'
+        '404':
+          description: Specified case type not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/dictionaries:
+    get:
+      tags:
+        - Dictionaries
+      summary: Get dictionaries
+      description: Returns all dictionaries.
+      operationId: Dictionaries_GetAllDictionaries
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters: []
+      responses:
+        '200':
+          description: Dictionaries
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Dictionaries.Dictionary]
+        '403':
+          description: Insufficient permissions to Dictionaries section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/dictionaries/{id}':
+    get:
+      tags:
+        - Dictionaries
+      summary: Get dictionary
+      description: Returns specified dictionary.
+      operationId: Dictionaries_GetDictionary
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of dictionary
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Dictionary
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Dictionaries.Dictionary'
+        '403':
+          description: Insufficient permissions to Dictionaries section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: Specified dictionary not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/dictionaries/{id}/values':
+    get:
+      tags:
+        - Dictionaries
+      summary: Get dictionary values
+      description: Returns dictionary values.
+      operationId: Dictionaries_GetDictionaryValues
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of dictionary
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Dictionary values
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Dictionaries.DictionaryValue]
+        '404':
+          description: Specified dictionary not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/dictionaries/{id}/values/{valueId}':
+    get:
+      tags:
+        - Dictionaries
+      summary: Get dictionary value
+      description: Returns dictionary value.
+      operationId: Dictionaries_GetDictionaryValue
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of dictionary
+          required: true
+          type: string
+        - name: valueId
+          in: path
+          description: Id of dictionary value
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Dictionary value
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Dictionaries.DictionaryValue'
+        '404':
+          description: Specified dictionary or dictionary value not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/download/{id}':
+    get:
+      tags:
+        - Download
+      summary: Download file
+      description: Downloads file from the server
+      operationId: Download_Download
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: File metadata Id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: File
+          schema:
+            $ref: '#/definitions/System.Object'
+        '404':
+          description: Specified file not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/events/{id}':
+    get:
+      tags:
+        - Events
+      summary: Get event
+      description: Returns detailed information about specified event
+      operationId: Events_GetEvent
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of event
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Event
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Events.EventDetails'
+        '403':
+          description: Insufficient permissions to Events section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: Specified event not found or not enough permissions
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+    put:
+      tags:
+        - Events
+      summary: Update event
+      description: Update event with additional attributes
+      operationId: Events_UpdateEvent
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of event
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: Request to update event
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Events.CreateOrUpdateEventRequest'
+      responses:
+        '200':
+          description: Updated event
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Events.EventDetails'
+        '403':
+          description: Insufficient permissions to Events section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: >-
+            Specified event not found or not enough permissions to edit
+            specified event
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+    delete:
+      tags:
+        - Events
+      summary: Delete event
+      description: Delete event
+      operationId: Events_DeleteEvent
+      consumes: []
+      produces: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of event
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Event successfully deleted
+        '403':
+          description: Insufficient permissions to Events section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: >-
+            Specified event not found or not enough permissions to edit
+            specified event
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/events:
+    get:
+      tags:
+        - Events
+      summary: Get events
+      description: Returns events
+      operationId: Events_GetEvents
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: caseId
+          in: query
+          description: Filter events by case
+          required: false
+          type: string
+        - name: minDate
+          in: query
+          description: >-
+            Min start date of events in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+            (inclusive)
+          required: false
+          type: string
+          format: date-time
+        - name: maxDate
+          in: query
+          description: >-
+            Max start date of events in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+            (exclusive)
+          required: false
+          type: string
+          format: date-time
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: List of events
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Events.Event]
+        '403':
+          description: Insufficient permissions to Events section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+    post:
+      tags:
+        - Events
+      summary: Create events
+      description: Create event with additional attributes
+      operationId: Events_CreateEvent
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          description: Request to create event
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Events.CreateOrUpdateEventRequest'
+      responses:
+        '201':
+          description: Created event
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Events.EventDetails'
+        '403':
+          description: Insufficient permissions to Events section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/eventTypes/{id}':
+    get:
+      tags:
+        - EventTypes
+      summary: Get event type
+      description: Returns detailed information about specified event type
+      operationId: EventTypes_GetEventType
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of event type
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Event type detailed information
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.EventTypes.EventTypeDetails'
+        '404':
+          description: Specified event type not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/eventTypes:
+    get:
+      tags:
+        - EventTypes
+      summary: Get event types
+      description: Returns all event types
+      operationId: EventTypes_GetEventTypes
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: List of event types
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.EventTypes.EventType]
+      deprecated: false
+  '/api/v1/folders/{id}':
+    get:
+      tags:
+        - Folders
+      summary: Get folder
+      description: 'Returns specified folder, folder contains projects and cases.'
+      operationId: Folders_GetFolder
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of folder
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Folder
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Folders.Folder'
+        '404':
+          description: Specified folder not found or not enough permissions
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/folders:
+    get:
+      tags:
+        - Folders
+      summary: Get folders
+      description: Returns folders.
+      operationId: Folders_GetFolders
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: List of folders
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Folders.Folder]
+      deprecated: false
+  /api/v1/health:
+    get:
+      tags:
+        - Health
+      summary: Check health status of service
+      description: Returns information about current health status of service.
+      operationId: Health_Check
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: dbToken
+          in: query
+          description: Token to allow check DB health
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Health.HealthCheckResult'
+      deprecated: false
+  '/api/v1/participants/{id}':
+    get:
+      tags:
+        - Participants
+      summary: Get participant
+      description: Returns detailed information about specified participant
+      operationId: Participants_GetParticipant
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of participant
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Participant detailed information
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Participants.Participant'
+        '403':
+          description: Insufficient permissions to Participants section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: Specified participant not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/participants:
+    get:
+      tags:
+        - Participants
+      summary: Get participants
+      description: Returns participants
+      operationId: Participants_GetParticipants
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: Participants
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Participants.Participant]
+        '403':
+          description: Insufficient permissions to Participants section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/projects/{id}':
+    get:
+      tags:
+        - Projects
+      summary: Get project
+      description: 'Returns specified project, project contains cases.'
+      operationId: Projects_GetProject
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of project
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Project
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Projects.Project'
+        '404':
+          description: Specified project not found or not enough permissions
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/projects:
+    get:
+      tags:
+        - Projects
+      summary: Get projects
+      description: Returns projects.
+      operationId: Projects_GetProjects
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: folderId
+          in: query
+          description: Filter projects by specified folder
+          required: false
+          type: string
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: List of projects
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Projects.Project]
+      deprecated: false
+  /api/v1/scripts/run:
+    post:
+      tags:
+        - Scripts
+      summary: Run script
+      operationId: Scripts_Run
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: name
+          in: query
+          description: Script name
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: Data for the script
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Scripts.ScriptRequest'
+      responses:
+        '200':
+          description: Result of script
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.Modules.Scheduler.App.AutomationScriptScheme.Model.RunScriptResult
+        '403':
+          description: Insufficient permissions to Workflow section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: Specified script not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/taskPriorities/{id}':
+    get:
+      tags:
+        - TaskPriorities
+      summary: Get task priority.
+      description: Returns detailed information about specified task priority.
+      operationId: TaskPriorities_GetTaskPriority
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of task priority
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Task priority detailed information
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.TaskPriorities.TaskPriority'
+        '404':
+          description: Specified task priority not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/taskPriorities:
+    get:
+      tags:
+        - TaskPriorities
+      summary: Get task priorities
+      description: Returns all task priorities.
+      operationId: TaskPriorities_GetTaskPriorities
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: List of task priorities
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.TaskPriorities.TaskPriority]
+      deprecated: false
+  '/api/v1/tasks/{id}':
+    get:
+      tags:
+        - Tasks
+      summary: Get task
+      description: Returns detailed information about specified task
+      operationId: Tasks_GetTask
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of task
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Task
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Tasks.TaskDetails'
+        '403':
+          description: Insufficient permissions to Tasks section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: Specified task not found or not enough permissions
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+    put:
+      tags:
+        - Tasks
+      summary: Update task
+      description: Update task with additional attributes
+      operationId: Tasks_UpdateTask
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of task
+          required: true
+          type: string
+        - name: request
+          in: body
+          description: Request to update task
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Tasks.CreateOrUpdateTaskRequest'
+      responses:
+        '200':
+          description: Updated task
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Tasks.TaskDetails'
+        '403':
+          description: Insufficient permissions to Tasks section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: >-
+            Specified task not found or not enough permissions to edit specified
+            task
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+    delete:
+      tags:
+        - Tasks
+      summary: Delete task
+      description: Delete task
+      operationId: Tasks_DeleteTask
+      consumes: []
+      produces: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of task
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Task successfully deleted
+        '403':
+          description: Insufficient permissions to Tasks section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: >-
+            Specified task not found or not enough permissions to edit specified
+            task
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/tasks:
+    get:
+      tags:
+        - Tasks
+      summary: Get tasks
+      description: Returns tasks
+      operationId: Tasks_GetTasks
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: caseId
+          in: query
+          description: Filter tasks by case
+          required: false
+          type: string
+        - name: parentId
+          in: query
+          description: Filter tasks by parent task
+          required: false
+          type: string
+        - name: minDate
+          in: query
+          description: >-
+            Min due date of tasks in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+            (inclusive)
+          required: false
+          type: string
+          format: date-time
+        - name: maxDate
+          in: query
+          description: >-
+            Max due date of tasks in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+            (exclusive)
+          required: false
+          type: string
+          format: date-time
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: List of tasks
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Tasks.Task]
+        '403':
+          description: Insufficient permissions to Tasks section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+    post:
+      tags:
+        - Tasks
+      summary: Create tasks
+      description: Create task with additional attributes
+      operationId: Tasks_CreateTask
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          description: Request to create task
+          required: true
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Tasks.CreateOrUpdateTaskRequest'
+      responses:
+        '201':
+          description: Created task
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Tasks.TaskDetails'
+        '403':
+          description: Insufficient permissions to Tasks section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/taskStatuses/{id}':
+    get:
+      tags:
+        - TaskStatuses
+      summary: Get task status
+      description: Returns detailed information about specified task status
+      operationId: TaskStatuses_GetTaskStatus
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of task status
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Task status detailed information
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.TaskStatuses.TaskStatus'
+        '404':
+          description: Specified task status not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/taskStatuses:
+    get:
+      tags:
+        - TaskStatuses
+      summary: Get task statuses
+      description: Returns all task statuses
+      operationId: TaskStatuses_GetTaskStatuses
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: List of task statuses
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.TaskStatuses.TaskStatus]
+      deprecated: false
+  '/api/v1/taskTypes/{id}':
+    get:
+      tags:
+        - TaskTypes
+      summary: Get task type
+      description: Returns detailed information about specified task type
+      operationId: TaskTypes_GetTaskType
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of task type
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Task type detailed information
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.TaskTypes.TaskTypeDetails'
+        '404':
+          description: Specified task type not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/taskTypes:
+    get:
+      tags:
+        - TaskTypes
+      summary: Get task types
+      description: Returns all task types
+      operationId: TaskTypes_GetTaskTypes
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: List of task types
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.TaskTypes.TaskType]
+      deprecated: false
+  /api/v1/upload:
+    post:
+      tags:
+        - Upload
+      summary: Upload file
+      description: Uploads file to the server
+      operationId: Upload_Upload
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters: []
+      responses:
+        '200':
+          description: File successfully uploaded
+          schema:
+            $ref: '#/definitions/System.Object'
+        '500':
+          description: Error while uploading file
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  '/api/v1/users/{id}':
+    get:
+      tags:
+        - Users
+      summary: Get user
+      description: Returns specified user.
+      operationId: Users_GetUser
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: Id of user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Users.User'
+        '403':
+          description: Insufficient permissions to Users section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+        '404':
+          description: Specified user not found
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+  /api/v1/users:
+    get:
+      tags:
+        - Users
+      summary: Get users
+      description: Returns users.
+      operationId: Users_GetUsers
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: isClient
+          in: query
+          description: >-
+            null - returns all users, true - returns only clients, false -
+            returns only not client users
+          required: false
+          type: boolean
+        - name: isLocked
+          in: query
+          description: >-
+            null - returns all users, true - returns only locked users, false -
+            returns only active users
+          required: false
+          type: boolean
+        - name: page
+          in: query
+          description: Page number starting with 1
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+        - name: pageSize
+          in: query
+          description: Items per page
+          required: false
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+      responses:
+        '200':
+          description: Users
+          schema:
+            $ref: >-
+              #/definitions/CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Users.User]
+        '403':
+          description: Insufficient permissions to Users section
+          schema:
+            $ref: '#/definitions/CaseMap.PublicApi.Errors.ErrorResponse'
+      deprecated: false
+definitions:
+  CaseMap.PublicApi.Auth.TokenRequest:
+    description: Request to obtain or refresh access token
+    required:
+      - grant_type
+    type: object
+    properties:
+      grant_type:
+        description: Grant type
+        enum:
+          - password
+          - refresh_token
+        type: string
+      username:
+        description: User name
+        type: string
+      password:
+        description: Password
+        type: string
+      refresh_token:
+        description: Refresh token
+        type: string
+  CaseMap.PublicApi.Auth.Token:
+    description: Access token information
+    required:
+      - access_token
+      - token_type
+      - expires_in
+    type: object
+    properties:
+      access_token:
+        description: Access token (readonly)
+        type: string
+        readOnly: true
+      token_type:
+        description: Type of token (readonly)
+        enum:
+          - bearer
+        type: string
+        readOnly: true
+      expires_in:
+        format: int32
+        description: Lifetime in seconds of access token (readonly)
+        maximum: 2147483647
+        minimum: 0
+        type: integer
+        readOnly: true
+      refresh_token:
+        description: 'Refresh token, wich can be used to obtain new access token (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Auth.TokenError:
+    description: Describes obtain or refresh token error
+    required:
+      - error
+    type: object
+    properties:
+      error:
+        description: Token obtaining error code (readonly)
+        enum:
+          - invalid_request
+          - invalid_grant
+          - unsupported_grant_type
+        type: string
+        readOnly: true
+      error_description:
+        description: Human-readable error description (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Calls.AttachRecordingRequest:
+    description: Request to attach recording to call
+    required:
+      - RecordingId
+    type: object
+    properties:
+      RecordingId:
+        description: Id of file of recording
+        type: string
+  CaseMap.PublicApi.Errors.ErrorResponse:
+    description: Response with infromation about error
+    required:
+      - Error
+      - ErrorType
+    type: object
+    properties:
+      Error:
+        description: Human-readable error desctipion (readonly)
+        type: string
+        readOnly: true
+      ErrorType:
+        description: System type of error (readonly)
+        type: string
+        readOnly: true
+  CaseMap.Modules.Calls.Commands.CreateCall:
+    required:
+      - StartDate
+      - Type
+      - Contact
+    type: object
+    properties:
+      ModuleId:
+        type: string
+      ExternalId:
+        type: string
+      Id:
+        type: string
+      StartDate:
+        format: date-time
+        type: string
+      Type:
+        enum:
+          - Inbound
+          - Outbound
+          - Missed
+        type: string
+      Contact:
+        $ref: >-
+          #/definitions/CaseDotStar.ServicePackages.Common.Models.Calls.ContactDto
+      User:
+        $ref: '#/definitions/CaseMap.Modules.Calls.Models.UserDto'
+      Duration:
+        format: int32
+        type: integer
+      Project:
+        $ref: '#/definitions/CaseDotStar.ServicePackages.Common.Dto.IdNameObjectDto'
+      Description:
+        type: string
+      Recording:
+        $ref: '#/definitions/CaseDotStar.ServicePackages.Common.Dto.IdNameObjectDto'
+  CaseDotStar.ServicePackages.Common.Models.Calls.ContactDto:
+    required:
+      - Phone
+    type: object
+    properties:
+      Phone:
+        description: Phone number of contact
+        type: string
+      Name:
+        description: Name of contact
+        type: string
+  CaseMap.Modules.Calls.Models.UserDto:
+    required:
+      - Type
+    type: object
+    properties:
+      Id:
+        type: string
+      Name:
+        type: string
+      Type:
+        enum:
+          - None
+          - User
+          - Unknown
+        type: string
+  CaseDotStar.ServicePackages.Common.Dto.IdNameObjectDto:
+    type: object
+    properties:
+      Id:
+        description: Unique identifier.
+        type: string
+      Name:
+        description: Display name.
+        type: string
+  System.Object:
+    type: object
+    properties: {}
+  CaseMap.Modules.Calls.Models.CallDto:
+    required:
+      - StartDate
+      - Type
+      - Contact
+    type: object
+    properties:
+      Id:
+        type: string
+      StartDate:
+        format: date-time
+        type: string
+      Type:
+        enum:
+          - Inbound
+          - Outbound
+          - Missed
+        type: string
+      Contact:
+        $ref: >-
+          #/definitions/CaseDotStar.ServicePackages.Common.Models.Calls.ContactDto
+      User:
+        $ref: '#/definitions/CaseMap.Modules.Calls.Models.UserDto'
+      Duration:
+        format: int32
+        type: integer
+      Project:
+        $ref: '#/definitions/CaseDotStar.ServicePackages.Common.Dto.IdNameObjectDto'
+      Description:
+        type: string
+      Recording:
+        $ref: '#/definitions/CaseDotStar.ServicePackages.Common.Dto.IdNameObjectDto'
+  CaseDotStar.ServicePackages.Common.FileSummary:
+    description: File modem
+    type: object
+    properties:
+      Id:
+        description: Identifier
+        type: string
+      StorageFileId:
+        description: Identifier in storage
+        type: string
+      Name:
+        description: Name
+        type: string
+  CaseMap.Modules.Calls.Commands.SendNotification:
+    required:
+      - ExternalId
+      - ModuleId
+      - UserId
+      - Type
+      - Contact
+    type: object
+    properties:
+      ExternalId:
+        type: string
+      ModuleId:
+        type: string
+      UserId:
+        type: string
+      Type:
+        enum:
+          - Inbound
+          - Outbound
+          - Missed
+        type: string
+      Contact:
+        $ref: >-
+          #/definitions/CaseDotStar.ServicePackages.Common.Models.Calls.ContactDto
+  CaseMap.PublicApi.Cases.CaseDetails:
+    description: Detailed information about case
+    required:
+      - Blocks
+      - Lines
+      - Fields
+      - Name
+      - Stage
+      - CaseType
+      - Assignee
+      - Id
+    type: object
+    properties:
+      Blocks:
+        description: Blocks of case grouped by block metadata
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.BlocksGroup'
+      Lines:
+        description: Lines of blocks grouped by block and line metadata
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.BlockLinesGroup'
+      Fields:
+        description: Fields of blocks
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.Field'
+      Images:
+        description: Images
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Files.Image'
+      Name:
+        description: Name
+        type: string
+      Number:
+        description: Full number
+        type: string
+      Description:
+        description: Description
+        type: string
+      IsArchive:
+        description: Is case archived (readonly)
+        type: boolean
+        readOnly: true
+      SynchronizationInfo:
+        $ref: '#/definitions/CaseMap.PublicApi.Cases.SynchronizationInfo'
+        description: Information about synchronization with external services (readonly)
+        readOnly: true
+      Stage:
+        $ref: '#/definitions/CaseMap.PublicApi.CaseTypes.Stage'
+        description: Current stage of case
+      CaseType:
+        $ref: '#/definitions/CaseMap.PublicApi.CaseTypes.CaseType'
+        description: Type of case
+      Folder:
+        $ref: '#/definitions/CaseMap.PublicApi.Folders.Folder'
+        description: Folder that contains case
+      Project:
+        $ref: '#/definitions/CaseMap.PublicApi.Projects.Project'
+        description: Project that contains case
+      Assignee:
+        $ref: '#/definitions/CaseMap.PublicApi.Users.User'
+        description: Assignee
+      Parent:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Parent case {CaseMap.PublicApi.Cases.Case}'
+      Client:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: Client of case
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Blocks.BlocksGroup:
+    description: List of blocks grouped by block metadata
+    required:
+      - BlockMetadataId
+      - Items
+    type: object
+    properties:
+      BlockMetadataId:
+        description: 'Id of block metadata {CaseMap.PublicApi.Blocks.BlockMetadata.Id}'
+        type: string
+      Items:
+        description: List of grouped blocks
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.Block'
+  CaseMap.PublicApi.Blocks.BlockLinesGroup:
+    description: List of lines grouped by block and line metadata
+    required:
+      - BlockId
+      - LineMetadataId
+      - Items
+    type: object
+    properties:
+      BlockId:
+        description: 'Id of block {CaseMap.PublicApi.Blocks.Block.Id}'
+        type: string
+      LineMetadataId:
+        description: 'Id of line metadata {CaseMap.PublicApi.Blocks.LineMetadata.Id}'
+        type: string
+      Items:
+        description: List of grouped lines
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.Line'
+      BlockMetadataId:
+        description: >-
+          Id of block metadata {CaseMap.PublicApi.Blocks.BlockMetadata.Id}
+          (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Blocks.Field:
+    description: Field of block
+    required:
+      - FieldMetadataId
+      - LineId
+    type: object
+    properties:
+      FieldMetadataId:
+        description: 'Id of field metadata {CaseMap.PublicApi.Blocks.FieldMetadata.Id}'
+        type: string
+      LineId:
+        description: 'Id of line contains field {CaseMap.PublicApi.Blocks.Line.Id}'
+        type: string
+      FieldValue:
+        $ref: '#/definitions/CaseMap.PublicApi.Blocks.FieldValue'
+        description: Value of field
+      BlockId:
+        description: >-
+          Id of block contains field {CaseMap.PublicApi.Blocks.Block.Id}
+          (readonly)
+        type: string
+        readOnly: true
+      BlockMetadataId:
+        description: >-
+          Id of block metadata of block contains field
+          {CaseMap.PublicApi.Blocks.BlockMetadata.Id} (readonly)
+        type: string
+        readOnly: true
+      LineMetadataId:
+        description: >-
+          Id of line metadata of line contains field
+          {CaseMap.PublicApi.Blocks.LineMetadata.Id} (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Files.Image:
+    description: Image
+    required:
+      - FileId
+      - Name
+    type: object
+    properties:
+      FileId:
+        description: File metadata ID
+        type: string
+      Url:
+        description: Url of this file (readonly)
+        type: string
+        readOnly: true
+      Name:
+        description: File name
+        type: string
+      Description:
+        description: File description
+        type: string
+  CaseMap.PublicApi.Cases.SynchronizationInfo:
+    description: Information about synchronization with external services
+    required:
+      - ExternalId
+    type: object
+    properties:
+      ExternalId:
+        description: External id of case
+        type: string
+      LastSyncDate:
+        format: date-time
+        description: Last synchronization date in UTC
+        type: string
+  CaseMap.PublicApi.CaseTypes.Stage:
+    description: Stage of case
+    required:
+      - Name
+    type: object
+    properties:
+      Id:
+        description: Id of stage (readonly)
+        type: string
+        readOnly: true
+      Name:
+        description: Name of stage
+        type: string
+  CaseMap.PublicApi.CaseTypes.CaseType:
+    description: 'Type of case, contains metadata of cases'
+    required:
+      - Name
+      - Abbreviation
+      - IsDeleted
+      - Stages
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      SysName:
+        description: System name (readonly)
+        type: string
+        readOnly: true
+      Abbreviation:
+        description: Abbreviation
+        type: string
+      IsDeleted:
+        description: Is case type deleted (readonly)
+        type: boolean
+        readOnly: true
+      Stages:
+        description: Stages of case type
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.CaseTypes.Stage'
+      Description:
+        description: Description of case type
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Folders.Folder:
+    description: Folder contains projects and cases
+    required:
+      - Name
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Projects.Project:
+    description: Project contains cases
+    required:
+      - Name
+      - IsArchive
+      - Folder
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      Description:
+        description: Description
+        type: string
+      IsArchive:
+        description: Is project archived (readonly)
+        type: boolean
+        readOnly: true
+      Folder:
+        $ref: '#/definitions/CaseMap.PublicApi.Folders.Folder'
+        description: Folder that contains this project
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Users.User:
+    description: User
+    required:
+      - Email
+      - FirstName
+      - LastName
+      - Initials
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Full name of user (readonly)
+        type: string
+        readOnly: true
+      Email:
+        description: Email
+        type: string
+      ExternalId:
+        description: External id of user (used for windows authentication)
+        type: string
+      FirstName:
+        description: First name
+        type: string
+      LastName:
+        description: Last name
+        type: string
+      MiddleName:
+        description: Middle name
+        type: string
+      Initials:
+        description: Initials
+        type: string
+      IsClient:
+        description: User is client (readonly)
+        type: boolean
+        readOnly: true
+      IsLocked:
+        description: User is locked (readonly)
+        type: boolean
+        readOnly: true
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Entity:
+    description: Base class for entities
+    required:
+      - Id
+    type: object
+    properties:
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Blocks.Block:
+    description: Block
+    required:
+      - Id
+    type: object
+    properties:
+      Id:
+        description: 'Id of block, client-side generated UUID'
+        type: string
+  CaseMap.PublicApi.Blocks.Line:
+    description: Line of block
+    required:
+      - Id
+    type: object
+    properties:
+      Id:
+        description: 'Id of line, client-side generated UUID'
+        type: string
+  CaseMap.PublicApi.Blocks.FieldValue:
+    description: Value of field
+    required:
+      - Type
+    type: object
+    properties:
+      Type:
+        description: >-
+          Type of value, must be equal to
+          {CaseMap.PublicApi.Blocks.FieldFormat.Type}
+        enum:
+          - Text
+          - TextArea
+          - Number
+          - Date
+          - Bool
+          - Hyperlink
+          - Dictionary
+          - Case
+          - Document
+          - Contact
+          - Formula
+          - NumberingTemplate
+          - User
+        type: string
+      Value:
+        $ref: '#/definitions/System.Object'
+        description: "Primitive field value,\r\n            set it if {CaseMap.PublicApi.Blocks.FieldValue.Type} in [\r\n            {CaseMap.PublicApi.Blocks.FieldType.Text},\r\n            {CaseMap.PublicApi.Blocks.FieldType.TextArea},\r\n            {CaseMap.PublicApi.Blocks.FieldType.Number},\r\n            {CaseMap.PublicApi.Blocks.FieldType.Date},\r\n            {CaseMap.PublicApi.Blocks.FieldType.Bool},\r\n            {CaseMap.PublicApi.Blocks.FieldType.Hyperlink}{CaseMap.PublicApi.Blocks.FieldType.NumberingTemplate}],\r\n            type of property - string if {CaseMap.PublicApi.Blocks.FieldValue.Type} in [\r\n            {CaseMap.PublicApi.Blocks.FieldType.Text},\r\n            {CaseMap.PublicApi.Blocks.FieldType.TextArea},\r\n            {CaseMap.PublicApi.Blocks.FieldType.Date} (in format yyyy-MM-dd),\r\n            {CaseMap.PublicApi.Blocks.FieldType.Hyperlink},\r\n            {CaseMap.PublicApi.Blocks.FieldType.NumberingTemplate}],\r\n            type of property - number if {CaseMap.PublicApi.Blocks.FieldValue.Type} equals {CaseMap.PublicApi.Blocks.FieldType.Number},\r\n            type of property - bolean if {CaseMap.PublicApi.Blocks.FieldValue.Type} equals {CaseMap.PublicApi.Blocks.FieldType.Bool},"
+      Entity:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: "Entity field value,\r\n            set it if {CaseMap.PublicApi.Blocks.FieldValue.Type} in [\r\n            {CaseMap.PublicApi.Blocks.FieldType.Dictionary},\r\n            {CaseMap.PublicApi.Blocks.FieldType.Case},\r\n            {CaseMap.PublicApi.Blocks.FieldType.Document},\r\n            {CaseMap.PublicApi.Blocks.FieldType.Contact}]\r\n            {CaseMap.PublicApi.Blocks.FieldType.User}]"
+      CalculatedValue:
+        $ref: '#/definitions/CaseMap.PublicApi.Blocks.CalculatedValue'
+        description: >-
+          Calculated field value, set it if
+          {CaseMap.PublicApi.Blocks.FieldValue.Type} equals
+          {CaseMap.PublicApi.Blocks.FieldType.Formula}
+  CaseMap.PublicApi.Blocks.CalculatedValue:
+    description: Calculated value
+    type: object
+    properties:
+      Result:
+        format: double
+        description: >-
+          Result, required if
+          {CaseMap.PublicApi.Blocks.CalculatedValue.CalculationFormulaId} is not
+          null
+        type: number
+      CalculationFormulaId:
+        description: >-
+          Id of calculation formula, set to null if
+          {CaseMap.PublicApi.Blocks.CalculatedValue.Result} is entered manually
+        type: string
+  CaseMap.PublicApi.Cases.UpdateCaseRequest:
+    description: Request to update case
+    required:
+      - Stage
+      - Name
+      - Assignee
+      - Blocks
+      - Lines
+      - Fields
+    type: object
+    properties:
+      Stage:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Current stage of case {CaseMap.PublicApi.CaseTypes.Stage}'
+      Name:
+        description: Name
+        type: string
+      Number:
+        description: Full number
+        type: string
+      Description:
+        description: Description
+        type: string
+      Assignee:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Assignee {CaseMap.PublicApi.Users.User}'
+      Client:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: Client of case
+      Blocks:
+        description: Blocks of case grouped by block metadata
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.BlocksGroup'
+      Lines:
+        description: Lines of blocks grouped by block and line metadata
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.BlockLinesGroup'
+      Fields:
+        description: Fields of blocks
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.Field'
+      Images:
+        description: Images
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Files.Image'
+  CaseMap.PublicApi.Cases.CasesRequest:
+    description: Request to get cases
+    type: object
+    properties:
+      CaseTypeId:
+        description: Filter cases by type
+        type: string
+      FolderId:
+        description: Get cases from folder
+        type: string
+      ProjectId:
+        description: Get cases from project
+        type: string
+      AssigneeId:
+        description: Filter cases by assignee
+        type: string
+      IsArchive:
+        description: Filter archived cases
+        type: boolean
+      MinDate:
+        format: date-time
+        description: >-
+          Min creation date of cases in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+          (inclusive)
+        type: string
+      MaxDate:
+        format: date-time
+        description: >-
+          Max creation date of cases in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+          (exclusive)
+        type: string
+      Page:
+        format: int32
+        description: Page number starting with 1
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+      PageSize:
+        format: int32
+        description: Items per page
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Cases.Case]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Cases.Case'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Cases.Case:
+    description: Case
+    required:
+      - Name
+      - Stage
+      - CaseType
+      - Assignee
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      Number:
+        description: Full number
+        type: string
+      Description:
+        description: Description
+        type: string
+      IsArchive:
+        description: Is case archived (readonly)
+        type: boolean
+        readOnly: true
+      SynchronizationInfo:
+        $ref: '#/definitions/CaseMap.PublicApi.Cases.SynchronizationInfo'
+        description: Information about synchronization with external services (readonly)
+        readOnly: true
+      Stage:
+        $ref: '#/definitions/CaseMap.PublicApi.CaseTypes.Stage'
+        description: Current stage of case
+      CaseType:
+        $ref: '#/definitions/CaseMap.PublicApi.CaseTypes.CaseType'
+        description: Type of case
+      Folder:
+        $ref: '#/definitions/CaseMap.PublicApi.Folders.Folder'
+        description: Folder that contains case
+      Project:
+        $ref: '#/definitions/CaseMap.PublicApi.Projects.Project'
+        description: Project that contains case
+      Assignee:
+        $ref: '#/definitions/CaseMap.PublicApi.Users.User'
+        description: Assignee
+      Parent:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Parent case {CaseMap.PublicApi.Cases.Case}'
+      Client:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: Client of case
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Cases.CreateCaseRequest:
+    description: Request to create case
+    required:
+      - CaseType
+      - Name
+      - Assignee
+      - Blocks
+      - Lines
+      - Fields
+    type: object
+    properties:
+      CaseType:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Type of case {CaseMap.PublicApi.CaseTypes.CaseType}'
+      Folder:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Folder that contains case {CaseMap.PublicApi.Folders.Folder}'
+      Project:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Project that contains case {CaseMap.PublicApi.Folders.Folder}'
+      Parent:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Parent case {CaseMap.PublicApi.Cases.Case}'
+      Name:
+        description: Name
+        type: string
+      Number:
+        description: Full number
+        type: string
+      Description:
+        description: Description
+        type: string
+      Assignee:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Assignee {CaseMap.PublicApi.Users.User}'
+      Client:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: Client of case
+      Blocks:
+        description: Blocks of case grouped by block metadata
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.BlocksGroup'
+      Lines:
+        description: Lines of blocks grouped by block and line metadata
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.BlockLinesGroup'
+      Fields:
+        description: Fields of blocks
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.Field'
+      Images:
+        description: Images
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Files.Image'
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.CaseTypes.CaseType]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.CaseTypes.CaseType'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.CaseTypes.CaseTypeDetails:
+    description: Detailed information about case type.
+    required:
+      - Blocks
+      - Name
+      - Abbreviation
+      - IsDeleted
+      - Stages
+      - Id
+    type: object
+    properties:
+      Blocks:
+        description: Blocks of case
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.BlockMetadata'
+      Name:
+        description: Name
+        type: string
+      SysName:
+        description: System name (readonly)
+        type: string
+        readOnly: true
+      Abbreviation:
+        description: Abbreviation
+        type: string
+      IsDeleted:
+        description: Is case type deleted (readonly)
+        type: boolean
+        readOnly: true
+      Stages:
+        description: Stages of case type
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.CaseTypes.Stage'
+      Description:
+        description: Description of case type
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Blocks.BlockMetadata:
+    description: Metadata of block
+    required:
+      - Name
+      - AllowMultiple
+      - Lines
+    type: object
+    properties:
+      Id:
+        description: Id of block (readonly)
+        type: string
+        readOnly: true
+      Name:
+        description: Name
+        type: string
+      Description:
+        description: Description
+        type: string
+      AllowMultiple:
+        description: Allow to add multiple blocks to case (readonly)
+        type: boolean
+        readOnly: true
+      Lines:
+        description: Lines of block
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.LineMetadata'
+  CaseMap.PublicApi.Blocks.LineMetadata:
+    description: Metadata of line of block
+    required:
+      - AllowMultiple
+      - Fields
+    type: object
+    properties:
+      Id:
+        description: Id of line (readonly)
+        type: string
+        readOnly: true
+      AllowMultiple:
+        description: Allow to add multiple lines to block (readonly)
+        type: boolean
+        readOnly: true
+      Fields:
+        description: Fields of line
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.FieldMetadata'
+  CaseMap.PublicApi.Blocks.FieldMetadata:
+    description: Metadata of field of line
+    required:
+      - Name
+      - IsRequired
+      - Format
+    type: object
+    properties:
+      Id:
+        description: Id of field (readonly)
+        type: string
+        readOnly: true
+      Name:
+        description: Name
+        type: string
+      Tag:
+        description: Tag of field
+        type: string
+      ExternalId:
+        description: External id of field
+        type: string
+      IsRequired:
+        description: Is field required
+        type: boolean
+      Format:
+        $ref: '#/definitions/CaseMap.PublicApi.Blocks.FieldFormat'
+        description: Format of field
+      DefaultValue:
+        $ref: '#/definitions/CaseMap.PublicApi.Blocks.FieldValue'
+        description: Default value of field
+  CaseMap.PublicApi.Blocks.FieldFormat:
+    description: Description of format of field
+    required:
+      - Type
+    type: object
+    properties:
+      Type:
+        description: Type of field
+        enum:
+          - Text
+          - TextArea
+          - Number
+          - Date
+          - Bool
+          - Hyperlink
+          - Dictionary
+          - Case
+          - Document
+          - Contact
+          - Formula
+          - NumberingTemplate
+          - User
+        type: string
+      Dictionary:
+        $ref: '#/definitions/CaseMap.PublicApi.Dictionaries.Dictionary'
+        description: >-
+          Dictionary with values for field, required if
+          {CaseMap.PublicApi.Blocks.FieldFormat.Type} equals
+          {CaseMap.PublicApi.Blocks.FieldType.Dictionary}
+      CalculationFormulas:
+        description: >-
+          Calculation formula for field, required if
+          {CaseMap.PublicApi.Blocks.FieldFormat.Type} equals
+          {CaseMap.PublicApi.Blocks.FieldType.Formula}
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.CalculationFormula'
+      NumberingTemplate:
+        $ref: '#/definitions/CaseMap.PublicApi.Blocks.NumberingTemplate'
+        description: >-
+          Numbering template for field,  required if
+          {CaseMap.PublicApi.Blocks.FieldFormat.Type} equals
+          {CaseMap.PublicApi.Blocks.FieldType.NumberingTemplate}
+  CaseMap.PublicApi.Dictionaries.Dictionary:
+    description: Dictionary
+    required:
+      - Name
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name of dictionary
+        type: string
+      SysName:
+        description: System name of dictionary (readonly)
+        type: string
+        readOnly: true
+      ValuesUrl:
+        description: Url to get dictionary values (readonly)
+        type: string
+        readOnly: true
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Blocks.CalculationFormula:
+    description: Calculation formula
+    required:
+      - Name
+      - Formula
+    type: object
+    properties:
+      Id:
+        description: Id of formula (readonly)
+        type: string
+        readOnly: true
+      Name:
+        description: Name
+        type: string
+      Formula:
+        description: Formula
+        type: string
+  CaseMap.PublicApi.Blocks.NumberingTemplate:
+    description: Numbering template
+    required:
+      - Template
+    type: object
+    properties:
+      Id:
+        description: Id of template (readonly)
+        type: string
+        readOnly: true
+      Template:
+        description: Template
+        type: string
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Dictionaries.Dictionary]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Dictionaries.Dictionary'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Dictionaries.DictionaryValue]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Dictionaries.DictionaryValue'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Dictionaries.DictionaryValue:
+    description: Dictionary value
+    required:
+      - Value
+      - Id
+    type: object
+    properties:
+      Value:
+        description: Value
+        type: string
+      SysName:
+        description: System name of value (readonly)
+        type: string
+        readOnly: true
+      ParentId:
+        description: Id of parent value
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Events.EventDetails:
+    description: Detailed information about event
+    required:
+      - Lines
+      - Fields
+      - StartDate
+      - EndDate
+      - AllDay
+      - Attendees
+      - Id
+    type: object
+    properties:
+      Lines:
+        description: Lines of event grouped by line metadata
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.LinesGroup'
+      Fields:
+        description: Fields of event
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.Field'
+      Name:
+        description: Name
+        type: string
+      Description:
+        description: Description
+        type: string
+      StartDate:
+        format: date-time
+        description: Start date
+        type: string
+      EndDate:
+        format: date-time
+        description: End date
+        type: string
+      AllDay:
+        description: Is all day event
+        type: boolean
+      Type:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: Event type
+      Case:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: Case
+      Attendees:
+        description: Attendees
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Events.Attendee'
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Blocks.LinesGroup:
+    description: List of lines grouped by line metadata
+    required:
+      - LineMetadataId
+      - Items
+    type: object
+    properties:
+      LineMetadataId:
+        description: 'Id of line metadata {CaseMap.PublicApi.Blocks.LineMetadata.Id}'
+        type: string
+      Items:
+        description: List of grouped lines
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.Line'
+      BlockMetadataId:
+        description: >-
+          Id of block metadata {CaseMap.PublicApi.Blocks.BlockMetadata.Id}
+          (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Events.Attendee:
+    description: Attendee
+    required:
+      - Type
+    type: object
+    properties:
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+      EntityId:
+        description: Entity Id
+        type: string
+      Type:
+        description: Type
+        enum:
+          - Email
+          - Participant
+          - User
+        type: string
+      Email:
+        description: Email
+        type: string
+  CaseMap.PublicApi.Events.CreateOrUpdateEventRequest:
+    description: Request to create Event
+    required:
+      - Name
+      - AllDay
+      - StartDate
+      - EndDate
+      - Attendees
+      - Lines
+      - Fields
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      Description:
+        description: Description
+        type: string
+      Case:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: >-
+          Case of Event
+          {CaseMap.PublicApi.Events.CreateOrUpdateEventRequest.Case}
+      Type:
+        $ref: '#/definitions/CaseMap.PublicApi.EventTypes.EventType'
+        description: 'Type of Event {CaseMap.PublicApi.EventTypes.EventType}'
+      AllDay:
+        description: Is all day event
+        type: boolean
+      StartDate:
+        format: date-time
+        description: Start date
+        type: string
+      EndDate:
+        format: date-time
+        description: Start date
+        type: string
+      Attendees:
+        description: Attendees
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Events.Attendee'
+      Lines:
+        description: Lines of blocks grouped by block and line metadata
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.LinesGroup'
+      Fields:
+        description: Fields of blocks
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.Field'
+  CaseMap.PublicApi.EventTypes.EventType:
+    description: Type (name) of task
+    required:
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      SysName:
+        description: System name
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Events.EventsRequest:
+    description: Request to get events
+    type: object
+    properties:
+      CaseId:
+        description: Filter events by case
+        type: string
+      MinDate:
+        format: date-time
+        description: >-
+          Min start date of events in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+          (inclusive)
+        type: string
+      MaxDate:
+        format: date-time
+        description: >-
+          Max start date of events in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+          (exclusive)
+        type: string
+      Page:
+        format: int32
+        description: Page number starting with 1
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+      PageSize:
+        format: int32
+        description: Items per page
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Events.Event]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Events.Event'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Events.Event:
+    description: Event
+    required:
+      - StartDate
+      - EndDate
+      - AllDay
+      - Attendees
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      Description:
+        description: Description
+        type: string
+      StartDate:
+        format: date-time
+        description: Start date
+        type: string
+      EndDate:
+        format: date-time
+        description: End date
+        type: string
+      AllDay:
+        description: Is all day event
+        type: boolean
+      Type:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: Event type
+      Case:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: Case
+      Attendees:
+        description: Attendees
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Events.Attendee'
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.EventTypes.EventTypeDetails:
+    description: Detailed information about event type.
+    required:
+      - Lines
+      - Id
+    type: object
+    properties:
+      Lines:
+        description: Additional attribute lines of event
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.LineMetadata'
+      Name:
+        description: Name
+        type: string
+      SysName:
+        description: System name
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Pagination.PageRequest:
+    description: Request for specified page
+    type: object
+    properties:
+      Page:
+        format: int32
+        description: Page number starting with 1
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+      PageSize:
+        format: int32
+        description: Items per page
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.EventTypes.EventType]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.EventTypes.EventType'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Folders.Folder]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Folders.Folder'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Health.HealthCheckRequest:
+    description: Request for checking health status of service
+    type: object
+    properties:
+      DbToken:
+        description: Token to allow check DB health
+        type: string
+  CaseMap.PublicApi.Health.HealthCheckResult:
+    description: Information about health status of service
+    required:
+      - Status
+      - DbStatus
+    type: object
+    properties:
+      Status:
+        description: Health status of service (readonly)
+        enum:
+          - Unknown
+          - OK
+          - Error
+        type: string
+        readOnly: true
+      DbStatus:
+        description: Health status of DB (readonly)
+        enum:
+          - Unknown
+          - OK
+          - Error
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Participants.Participant:
+    description: Participant
+    required:
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      Email:
+        description: Email
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Participants.Participant]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Participants.Participant'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Projects.ProjectsRequest:
+    description: Request to get projects
+    type: object
+    properties:
+      FolderId:
+        description: Filter projects by specified folder
+        type: string
+      Page:
+        format: int32
+        description: Page number starting with 1
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+      PageSize:
+        format: int32
+        description: Items per page
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Projects.Project]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Projects.Project'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Scripts.ScriptRequest:
+    type: object
+    properties:
+      Data:
+        $ref: '#/definitions/System.Object'
+  CaseMap.Modules.Scheduler.App.AutomationScriptScheme.Model.RunScriptResult:
+    type: object
+    properties:
+      Result:
+        $ref: '#/definitions/System.Object'
+        description: Script execution result.
+      IsSuccess:
+        description: Indicates successful execution of script.
+        type: boolean
+      Error:
+        description: "Script execution error.\r\n            Null if {CaseMap.Modules.Scheduler.App.AutomationScriptScheme.Model.RunScriptResult.IsSuccess} is true."
+        type: string
+      Log:
+        description: "Script execution log.\r\n            Collection of messages logged from script."
+        type: array
+        items:
+          type: string
+  CaseMap.PublicApi.TaskPriorities.TaskPriority:
+    description: Priority of task
+    required:
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      SysName:
+        description: System name
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.TaskPriorities.TaskPriority]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.TaskPriorities.TaskPriority'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Tasks.TaskDetails:
+    description: Detailed information about case
+    required:
+      - Lines
+      - Fields
+      - TaskType
+      - Case
+      - Status
+      - Priority
+      - Id
+    type: object
+    properties:
+      Lines:
+        description: Lines of blocks grouped by line metadata
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.LinesGroup'
+      Fields:
+        description: Fields of blocks
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.Field'
+      Description:
+        description: Description
+        type: string
+      DueDate:
+        format: date-time
+        description: Due date
+        type: string
+      CloseDate:
+        format: date-time
+        description: Close date (readonly)
+        type: string
+        readOnly: true
+      TaskType:
+        $ref: '#/definitions/CaseMap.PublicApi.TaskTypes.TaskType'
+        description: Type of task
+      Case:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Case of task {CaseMap.PublicApi.Tasks.Task.Case}'
+      Parent:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Parent task {CaseMap.PublicApi.Tasks.Task}'
+      Assignees:
+        description: Assignees of task
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Tasks.Assignee'
+      Status:
+        $ref: '#/definitions/CaseMap.PublicApi.TaskStatuses.TaskStatus'
+        description: 'Status of task {CaseMap.PublicApi.TaskStatuses.TaskStatus}'
+      Priority:
+        $ref: '#/definitions/CaseMap.PublicApi.TaskPriorities.TaskPriority'
+        description: 'Priority of task {CaseMap.PublicApi.TaskPriorities.TaskPriority}'
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.TaskTypes.TaskType:
+    description: Type (name) of task
+    required:
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Tasks.Assignee:
+    description: Assignee
+    required:
+      - Type
+      - Id
+    type: object
+    properties:
+      Type:
+        description: Type
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.TaskStatuses.TaskStatus:
+    description: Status of task
+    required:
+      - Id
+    type: object
+    properties:
+      Name:
+        description: Name
+        type: string
+      SysName:
+        description: System name
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Tasks.CreateOrUpdateTaskRequest:
+    description: Request to create task
+    required:
+      - TaskType
+      - Case
+      - Status
+      - Priority
+      - Lines
+      - Fields
+    type: object
+    properties:
+      Description:
+        description: Description
+        type: string
+      DueDate:
+        format: date-time
+        description: Due date
+        type: string
+      TaskType:
+        $ref: '#/definitions/CaseMap.PublicApi.TaskTypes.TaskType'
+        description: >-
+          Type of task
+          {CaseMap.PublicApi.Tasks.CreateOrUpdateTaskRequest.TaskType}
+      Case:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Case of task {CaseMap.PublicApi.Tasks.CreateOrUpdateTaskRequest.Case}'
+      Parent:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Parent task {CaseMap.PublicApi.Tasks.Task}'
+      Assignees:
+        description: 'Assignees of task {CaseMap.PublicApi.Tasks.Assignee}'
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Tasks.Assignee'
+      Status:
+        $ref: '#/definitions/CaseMap.PublicApi.TaskStatuses.TaskStatus'
+        description: 'Status of task {CaseMap.PublicApi.TaskStatuses.TaskStatus}'
+      Priority:
+        $ref: '#/definitions/CaseMap.PublicApi.TaskPriorities.TaskPriority'
+        description: 'Priority of task {CaseMap.PublicApi.TaskPriorities.TaskPriority}'
+      Lines:
+        description: Lines of blocks grouped by block and line metadata
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.LinesGroup'
+      Fields:
+        description: Fields of blocks
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.Field'
+  CaseMap.PublicApi.Tasks.TasksRequest:
+    description: Request to get tasks
+    type: object
+    properties:
+      CaseId:
+        description: Filter tasks by case
+        type: string
+      ParentId:
+        description: Filter tasks by parent task
+        type: string
+      MinDate:
+        format: date-time
+        description: >-
+          Min due date of tasks in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+          (inclusive)
+        type: string
+      MaxDate:
+        format: date-time
+        description: >-
+          Max due date of tasks in yyyy-MM-ddTHH:mm:ss.fffZ format in UTC
+          (exclusive)
+        type: string
+      Page:
+        format: int32
+        description: Page number starting with 1
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+      PageSize:
+        format: int32
+        description: Items per page
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Tasks.Task]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Tasks.Task'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Tasks.Task:
+    description: Task
+    required:
+      - TaskType
+      - Case
+      - Status
+      - Priority
+      - Id
+    type: object
+    properties:
+      Description:
+        description: Description
+        type: string
+      DueDate:
+        format: date-time
+        description: Due date
+        type: string
+      CloseDate:
+        format: date-time
+        description: Close date (readonly)
+        type: string
+        readOnly: true
+      TaskType:
+        $ref: '#/definitions/CaseMap.PublicApi.TaskTypes.TaskType'
+        description: Type of task
+      Case:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Case of task {CaseMap.PublicApi.Tasks.Task.Case}'
+      Parent:
+        $ref: '#/definitions/CaseMap.PublicApi.Entity'
+        description: 'Parent task {CaseMap.PublicApi.Tasks.Task}'
+      Assignees:
+        description: Assignees of task
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Tasks.Assignee'
+      Status:
+        $ref: '#/definitions/CaseMap.PublicApi.TaskStatuses.TaskStatus'
+        description: 'Status of task {CaseMap.PublicApi.TaskStatuses.TaskStatus}'
+      Priority:
+        $ref: '#/definitions/CaseMap.PublicApi.TaskPriorities.TaskPriority'
+        description: 'Priority of task {CaseMap.PublicApi.TaskPriorities.TaskPriority}'
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.TaskStatuses.TaskStatus]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.TaskStatuses.TaskStatus'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.TaskTypes.TaskTypeDetails:
+    description: Detailed information about task type.
+    required:
+      - Lines
+      - Id
+    type: object
+    properties:
+      Lines:
+        description: Additional attribute lines of tasks
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Blocks.LineMetadata'
+      Name:
+        description: Name
+        type: string
+      Id:
+        description: Id of entity
+        type: string
+      CreationDate:
+        format: date-time
+        description: Creation date in UTC (readonly)
+        type: string
+        readOnly: true
+      LastChangeDate:
+        format: date-time
+        description: Last change date in UTC (readonly)
+        type: string
+        readOnly: true
+      Url:
+        description: Url of this entity (readonly)
+        type: string
+        readOnly: true
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.TaskTypes.TaskType]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.TaskTypes.TaskType'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
+  CaseMap.PublicApi.Users.UsersRequest:
+    description: Request to get users
+    type: object
+    properties:
+      IsClient:
+        description: >-
+          null - returns all users, true - returns only clients, false - returns
+          only not client users
+        type: boolean
+      IsLocked:
+        description: >-
+          null - returns all users, true - returns only locked users, false -
+          returns only active users
+        type: boolean
+      Page:
+        format: int32
+        description: Page number starting with 1
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+      PageSize:
+        format: int32
+        description: Items per page
+        maximum: 2147483647
+        minimum: 1
+        type: integer
+  'CaseMap.PublicApi.Pagination.Page[CaseMap.PublicApi.Users.User]':
+    description: Page
+    required:
+      - Items
+    type: object
+    properties:
+      Items:
+        description: Items of page (readonly)
+        type: array
+        items:
+          $ref: '#/definitions/CaseMap.PublicApi.Users.User'
+        readOnly: true
+      NextPageUrl:
+        description: 'Next page url if exists, otherwise null (readonly)'
+        type: string
+        readOnly: true
